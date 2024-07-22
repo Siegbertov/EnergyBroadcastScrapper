@@ -3,22 +3,15 @@ from utils import bold, italic, mono, empty
 from utils import difference_in_time, sum_of_time, edit_time_period
 
 class Group:
-    def __init__(self, num:str, off_pairs:list) -> None:
+    def __init__(self, num:str, inline:str) -> None:
         self.__num = num
-        self.__OFF_PAIRS = off_pairs
-
-        self.__LINE = None
-        self.create_line()
+        self.__LINE = inline
 
         self.__ON_PAIRS = []
         self.create_on_pairs()
 
-    def create_line(self):
-        self.__LINE = "+".join(self.__OFF_PAIRS)
-        if not self.__LINE.startswith("00:00"):
-            self.__LINE = f"00:00+{self.__LINE}"
-        if not self.__LINE.endswith("24:00"):
-            self.__LINE = f"{self.__LINE}+24:00"
+        self.__OFF_PAIRS = []
+        self.create_off_pairs()
 
     def get_num(self) -> int:
         return int(self.__num)
@@ -28,6 +21,12 @@ class Group:
             for elem in self.__LINE.split("-"):
                 if "+" in elem:
                     self.__ON_PAIRS.append(elem)
+
+    def create_off_pairs(self):
+        if "+" in self.__LINE:
+            for elem in self.__LINE.split("+"):
+                if "-" in elem:
+                    self.__OFF_PAIRS.append(elem)
 
     def show_num(self, tg:TG):
         result = f"Група #{self.__num}:"

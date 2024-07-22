@@ -1,15 +1,21 @@
 from day import Day
+from db import DBHandler
 from utils import clear_console
 from utils import get_current_time, italic, UPDATE_EMOJI, DISK_EMOJI
 from utils import VIEW, TOTAL, TG
 
 class Broadcast:
-    def __init__(self, posts:dict, is_online:bool):
+    def __init__(self, posts:dict, is_online:bool, db_filename:str):
+        db_handler = DBHandler(db_filename=db_filename)
         self.__days = []
         self.__is_online = is_online
         self.__update_time = get_current_time()
+        
+        # Creating days
         for post_day, post_groups in posts.items():
             self.__days.append(Day(name=post_day, groups=post_groups))
+            # UPDATING DATABASE
+            db_handler.update_day(day_name=post_day, groups=post_groups)
 
     def get_last_day(self) -> Day:
         return self.__days[-1]

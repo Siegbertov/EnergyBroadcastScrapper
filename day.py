@@ -8,7 +8,7 @@ class Day:
         self.__name = name
         self.__groups = []
         for group_num, group_pairs in groups.items():
-            self.__groups.append(Group(num=group_num, off_pairs=group_pairs))
+            self.__groups.append(Group(num=group_num, inline=group_pairs))
 
     def show_day_name(self, tg:TG):
         result = f"Графік на {self.__name}:"

@@ -1,18 +1,18 @@
 from broadcast import Broadcast
-from utils import scrap_all_posts, read_from_json_file, write_to_json_file, clear_console
+from utils import scrapper, read_from_json_file, write_to_json_file, clear_console
 from utils import VIEW, TOTAL, TG, MODE
 
-JSON_FILE = "posts.json"
+JSON_FILENAME = "posts.json"
+DB_FILENAME = "broadcast_archive.db"
 LINK = "https://t.me/s/ternopiloblenerho"
-# DAY_MONTH_RAW = r"(\d+) (\w+), з 00:00 до 24:00"
+# DAY_MONTH_RAW = r"(\d+) (\w+), з 00:00 до 24:00" # OLD WAY
 DAY_MONTH_RAW = r"(\d+) (\w+),"
 GROUP_RAW = r"(\d\d:\d\d)-(\d\d:\d\d)\s+(\d)\s+\w+"
-OFFS = ["🪫", "🔴", "🟥", "🔻", "🌚", "🌑"]
-ONS =  ["🔋", "🟢", "🟩", "⚡️", "🌝", "🌕"]
+
 
 def main():
     IS_ONLINE = False
-    POSTS = scrap_all_posts(
+    POSTS = scrapper(
         link=LINK,
         day_month_r=DAY_MONTH_RAW,
         group_r=GROUP_RAW
@@ -21,22 +21,28 @@ def main():
         IS_ONLINE = True
         write_to_json_file(
             data=POSTS,
-            filename=JSON_FILE
+            filename=JSON_FILENAME
         )
-    POSTS = read_from_json_file(JSON_FILE)
+    POSTS = read_from_json_file(JSON_FILENAME)    
     # ---------------------- SETTINGS 
-    S_SHOW_MODE = MODE.ORDER_R            # FULL, ORDER, ORDER_R
-    S_GROUPS_TO_SHOW = [1, 2, 3, 4, 5, 6]       # list of numbers from 1 to 6 []
-    S_VIEW = VIEW.INLINE                        # <INLINE, ON_PAIRS, OFF_PAIRS>
-    S_TOTAL = TOTAL.ON                         # <NONE, ON, OFF>
-    S_TG = TG.TRUE                              # <TRUE, FALSE>
+    OFFS = ["🪫", "🔴", "🟥", "🔻", "🌚", "🌑"]
+    ONS =  ["🔋", "🟢", "🟩", "⚡️", "🌝", "🌕"]
     S_OFF_EMOJI = OFFS[0]
     S_ON_EMOJI = ONS[0]
     S_ON_OFF_EMOJI = [S_OFF_EMOJI, S_ON_EMOJI]
+
+    S_GROUPS_TO_SHOW = [1, 2, 3, 4, 5, 6]       # list of numbers from 1 to 6 []
+
+    S_SHOW_MODE = MODE.ORDER_R            # FULL, ORDER, ORDER_R
+    S_VIEW = VIEW.INLINE                        # <INLINE, ON_PAIRS, OFF_PAIRS>
+    S_TOTAL = TOTAL.ON                         # <NONE, ON, OFF>
+    S_TG = TG.TRUE                              # <TRUE, FALSE>
+    
     # ----------------------------------
     broadcast = Broadcast(
                       posts=POSTS,
-                      is_online=IS_ONLINE
+                      is_online=IS_ONLINE,
+                      db_filename=DB_FILENAME
                       )
     # showing
     match S_SHOW_MODE:
@@ -70,7 +76,6 @@ def main():
                                         )
                 input()
             
-    
     clear_console()
 
 if __name__ == "__main__":

@@ -77,7 +77,17 @@ def re_search_all_off_lines(text:str, pattern_r:str) -> dict:
         result[pair].sort()
 
     result = {k: v for k, v in sorted(list(result.items()))}
-    return result
+
+    temp = {}
+    for pair in result.keys():
+        current_inline = "+".join(result[pair])
+        if not current_inline.startswith("00:00"):
+            current_inline = f"00:00+{current_inline}"
+        if not current_inline.endswith("24:00"):
+            current_inline = f"{current_inline}+24:00"
+        temp[pair] = current_inline
+
+    return temp
 
 def re_search_day_and_month(text:str, pattern_r:str) -> tuple:
     result = (None, None)
@@ -89,7 +99,7 @@ def re_search_day_and_month(text:str, pattern_r:str) -> tuple:
         pass #TODO exception handling
     return result
 
-def scrap_all_posts(link:str, day_month_r:str, group_r:str) -> dict:
+def scrapper(link:str, day_month_r:str, group_r:str) -> dict:
     result_d = {}
     temp_d = {}
     try:
@@ -98,7 +108,6 @@ def scrap_all_posts(link:str, day_month_r:str, group_r:str) -> dict:
        posts = soup.find_all("div", {"class": "tgme_widget_message_bubble"})
        for post in posts:
             text = post.find("div", {"class": "tgme_widget_message_text"})
-            # footer = post.find("time", {"class": "time"})['datetime'] # post_time
 
             if text is not None:
                 day, month = re_search_day_and_month(text=text.text, pattern_r=day_month_r)
@@ -111,7 +120,6 @@ def scrap_all_posts(link:str, day_month_r:str, group_r:str) -> dict:
     for reversed_key in list(temp_d.keys())[::-1]:
         if reversed_key not in result_d:
             result_d[reversed_key] = temp_d[reversed_key]
-    
     return dict(reversed(list(result_d.items())))
 
 def write_to_json_file(data:dict, filename:str, mode='w'):
