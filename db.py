@@ -13,24 +13,28 @@ class DBHandler:
         self.__create_table()
 
     def __create_table(self) -> None:
-        self.__cursor.execute("""CREATE TABLE IF NOT EXISTS days (
-                                day_name text,
-                                first_g text,
-                                second_g text,
-                                third_g text,
-                                fouth_g text,
-                                fifth_g text,
-                                sixth_g text
-                            )""")
+        with self.__connection:
+            self.__cursor.execute("""CREATE TABLE IF NOT EXISTS days (
+                                    day_name text,
+                                    first_g text,
+                                    second_g text,
+                                    third_g text,
+                                    fouth_g text,
+                                    fifth_g text,
+                                    sixth_g text
+                                )""")
 
     def is_day_in_db(self, day_name:str) -> bool:
-        return bool (self.__cursor.execute(f"SELECT * FROM days WHERE day_name= :day_name", {'day_name':day_name}).fetchone())
+        with self.__connection:
+            return bool (self.__cursor.execute(f"SELECT * FROM days WHERE day_name= :day_name", {'day_name':day_name}).fetchone())
 
     def get_all_data(self) -> list:
-        return self.__cursor.execute(f"SELECT * FROM days").fetchall()
+        with self.__connection:
+            return self.__cursor.execute(f"SELECT * FROM days").fetchall()
 
     def get_day(self, day_name:str) -> tuple:
-        return self.__cursor.execute(f"SELECT * FROM days WHERE day_name=:day_name", {'day_name':day_name}).fetchone()
+        with self.__connection:
+            return self.__cursor.execute(f"SELECT * FROM days WHERE day_name=:day_name", {'day_name':day_name}).fetchone()
 
     def update_day(self, day_name:str, groups:dict):
         with self.__connection:
