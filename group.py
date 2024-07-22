@@ -41,6 +41,7 @@ class Group:
         result = result.replace("-", on_of_emoji[0])
         result = result.replace("+", on_of_emoji[1])
         # FIXME delete it if you don't need minutes as period
+        result = result.replace(":00", "")
         result = edit_time_period(result)
         print(result)     
 
@@ -49,6 +50,7 @@ class Group:
         if tg is TG.TRUE:
             result = mono(result)
         result = result.replace("-", off_emoji)
+        result = edit_time_period(result)
         print(result) 
 
     def show_only_on_hours(self, tg:TG, on_emoji:str):
@@ -56,6 +58,7 @@ class Group:
         if tg is TG.TRUE:
             result = mono(result)
         result = result.replace("+", on_emoji)
+        result = edit_time_period(result)
         print(result)
 
     def get_total_on_light(self) ->str:
