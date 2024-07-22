@@ -1,0 +1,35 @@
+import sqlite3
+from test import scrapper
+
+class DBHandler:
+    def __init__(self):
+        self.connection = sqlite3.connect(':memory:')
+        self.cursor = self.connection.cursor()
+        self.cursor.execute("""CREATE TABLE employees (
+                                first text,
+                                last text,
+                                pay integer
+                   )""")
+
+    def add_day(self, day):
+        pass
+
+def main():
+    LINK = "https://t.me/s/ternopiloblenerho"
+    DAY_MONTH_RAW = r"(\d+) (\w+),"
+    GROUP_RAW = r"(\d\d:\d\d)-(\d\d:\d\d)\s+(\d)\s+\w+"
+
+    DBHandler()
+
+    days = scrapper(
+                    link=LINK,
+                    day_month_r=DAY_MONTH_RAW,
+                    group_r=GROUP_RAW
+                    )   
+    for day, groups in days.items():
+        print(day)
+        print(groups)
+
+
+if __name__ == "__main__":
+    main()
